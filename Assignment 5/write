@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "" > testFile
+
+max=10
+
+for i in `seq 1 $max`
+do
+    echo "This is a test message." >> testFile
+done

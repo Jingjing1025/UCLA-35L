@@ -1,0 +1,35 @@
+#! /bin/bash
+
+sed -n '/<td>/p' $1 |
+# I used this command to firstly extract all the words from the table
+
+sed -n '2~2p' |
+# I used this command to remove the English words from the file by only printing out even numbered lines
+
+sed -r 's/<td>//g' |
+# I used this command to remove all '<td>' characters
+
+sed -r 's/<\/td>//g' |
+# I used this command to remove	all '</td>' characters
+
+tr '[:upper:]' '[:lower:]' |
+# I used this command to change	all upper case letters into lower case letters
+
+sed -r "s/\`/\'/g" |
+# I used this command to replace "`" characters into "'" character
+
+sed -r 's/ /\n/g' |
+# I used this command to treat spaces as new lines
+
+sed -r '/^\s*$/d' |
+# I used this command to delete empty lines 
+
+sed 's/<[^>]*>//g' |
+# I used this command to remove the remaining invalid "<>" characters 
+
+tr -cs "pk\'mnwlhaeiou" '[\n*]' |
+# I used this command to remove the invalid Hawaiian words based on its traditional orthography
+
+sort -u
+# Finally, I used this command to sort the final output
+

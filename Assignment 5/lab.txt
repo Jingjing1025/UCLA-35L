@@ -1,0 +1,198 @@
+//lab.txt
+//Name: Jingjing Nie
+//UID: 304567417
+
+1. To start, I firstly created a tr2b.c file.
+I then checked whether the number of arguments
+is correct, whether the from and to arguments
+have the same length, and whther there are repeated
+letters in the from argument. I used "fprintf" 
+to print out the error messages.
+
+Then, I used getchar() and putchar() to read and 
+write the standard file. I used a while loop and 
+a for loop to iterate through the whole file and 
+change the letters in "from" to their corresponding
+letters in "to".
+
+2. Similarly, I checked for all the error cases.
+In this C file, I used "write" to print out the
+error mesages.
+
+I also used a while loop and a for loop to iterate
+through the standard file, but instead of getchar()
+and putchar(), I used "read" and "write", and also
+used the return value of "read" to help decide the
+ending features of the file.
+
+3. I first created a file that is larger than 5,000,000
+bytes by copying and pasting a lot of words.
+
+Then, to test the two C files when copying one file to another:
+I firstly compiled them with "gcc":
+gcc -o tr2b tr2b.c
+gcc -o tr2u tr2u.c
+
+Then, I used the command:
+"strace -c ./tr2b and yes < testFile > results"
+and obtained the following output:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 61.07    0.000618           1       638           write
+ 38.93    0.000394           1       640           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0         9           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.001012                  1304         1 total
+
+
+
+I then tested the tr2u.c file with the command:
+"strace -c ./tr2u and yes < testFile > results"
+and obtained the following output:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.79   25.914201           5   5224608           write
+ 44.21   20.533747           4   5224610           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   46.447948              10449240         1 total
+
+
+According to the output, it is clear that most of the 
+time was spent on reading and writing the files. Also,
+the number of system calls for the unduffered
+one is much bigger than the number of calls for the buffered
+one, and the time cost for the unbuffered one is much
+longer than the buffered ones. This is because calling system
+calls require overheads and switches from user modes to 
+kernel modes, and thus takes longer time. So buffered ones,
+by calling fewer system calls, will consume less time.
+
+
+Next, I tested the case in which the file is copied to terminal.
+
+For tr2b.c, I used the command:
+"strace -c ./tr2b and yes < testFile"
+with the output:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 98.47    0.178193           4     45712           write
+  1.42    0.002575           4       640           read
+  0.04    0.000066           7         9           mmap
+  0.02    0.000039          10         4           mprotect
+  0.01    0.000022           6         4           fstat
+  0.01    0.000019          10         2           open
+  0.01    0.000014          14         1           munmap
+  0.01    0.000010           5         2           close
+  0.00    0.000009           9         1         1 access
+  0.00    0.000008           8         1           execve
+  0.00    0.000005           5         1           brk
+  0.00    0.000005           5         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.180965                 46378         1 total
+
+
+
+And for the tr2u.c file, I used:
+"strace -c ./tr2u and yes < testFile"
+with the output:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 57.92   34.037623           7   5224608           write
+ 42.08   24.730030           5   5224610           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   58.767653              10449240         1 total
+
+
+Similarly as the above case, most of the 
+time was spent on reading and writing the files. Also,
+the number of system calls for the unduffered
+one is much bigger than the number of calls for the buffered
+one, and the time cost for the unbuffered one is much
+longer than the buffered ones. The difference is that 
+when copyng a file to terminal, the number of system 
+calls for the unbuffered case stays the same as the previous
+case, but the number of system calls for the buffered
+one increased a lot in this case than the previous one.
+This can be explained by the different writing mechanisms
+for copying a file to terminal, which required more system
+calls.
+
+
+4. I used the "time" command.
+I firstly tested the case in which a file is copied to 
+another file.
+For tr2b.c file, I used:
+"time ./tr2b and yes < testFile > results"
+with the output:
+
+real	0m0.242s
+user	0m0.185s
+sys	    0m0.011s
+
+And for tr2u.c file, I used:
+"time ./tr2u and yes < testFile > results"
+
+real	0m10.588s
+user	0m1.354s
+sys	    0m9.187s
+
+
+I then tested the case in which a file output is written
+to terminal.
+
+For tr2b.c file, I used:
+"time ./tr2b and yes < testFile"
+with the output:
+
+real	0m0.852s
+user	0m0.217s
+sys	    0m0.101s
+
+And for tr2u.c file, I used:
+"time ./tr2u and yes < testFile"
+with the output:
+
+real	0m9.747s
+user	0m1.414s
+sys	    0m8.319s
+
+The comparison between the results suggests that the buffered
+version takes much shorter time than the unbuffered
+one due to the fewer number of system calls.
+Also, it suggests that the times taken for writing to
+another file and writing to terminal are actually 
+similar to each other for both tr2b.c file and the
+tr2u.c file.

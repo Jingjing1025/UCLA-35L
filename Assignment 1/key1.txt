@@ -1,0 +1,81 @@
+Name: Jingjing Nie
+UID: 304567417
+
+
+Exercise 1.1
+1. emacs SP exer1.html enter
+2. C-s HTML enter
+3. C-s scavenger enter M-b
+4. C-s self-referential enter M-b M-b
+5. C-s arrow enter M-b
+6. C-e
+7. C-a
+8. I saved the keystrokes by using the M key and directly searching using C-s
+9. I did not use the arrow keys
+10.C-x C-c
+
+Exercise 1.2
+1. emacs SP exer2.html enter
+2. M-x goto-line enter 18 enter C-k
+3. C-s <! enter  C-a C-k
+4. C-s <! enter C-a C-k C-k C-k C-k C-k
+5. C-s <! C-b C-b C-d C-d C-d C-d C-d C-d C-d 
+   C-e M-k M-k M-k 
+   C-s <! enter C-a C-k
+
+Exercise 1.3
+1. emacs SP exer3.html enter
+2. C-s Assignment 1 C-b 2 
+   C-f C-s Assignment 1 C-b 2
+3. C-s UTF-8 enter delete delete delete delete S-ASCII
+4. M-x delete-matching-lines enter [^[:ascii:]]
+5. C-s </ol> enter C-e enter
+6. C-x C-s C-x C-c
+
+Exercise 1.4
+1. cat SP exer2.html SP exer2.diff SP >exer4.html" to create a file exer4.html
+2. emacs SP exer4.html enter
+3. M-> C-r -<! C-a C-f C-@ C-e M-w C-r html> C-e enter C-y
+4. C-r -<! C-e C-@ down down down C-e C-f M-w C-r nothing. C-e enter C-y
+   C-r -<! C-f C-f C-f C-@ C-b C-b C-b C-b C-b C-b C-b C-r nothing. M-f C-y
+   C-r -<! C-f C-f C-f C-@ down down C-e C-f M-w ^^^ C-r submit< C-e down down C-y
+   C-r -<! C-f C-@ C-e M-w up up up C-r emacs</h2> C-e down down C-y
+   C-r -<! C-f C-@ down down C-e M-w up up up C-r hunt</h2> C-e down down C-y
+5. M-> C-r +++ up C-@ M-> C-w
+6. C-x u
+7. --> C-r +++ up up enter <!-- C-s --> C-f delete C-s --> C-f delete C-s --> C-f delete C-s --> C-f delete (delete the inside comment symbols since nested comments are not allowed)
+8. M-< M-% <ol> <oL>
+   I found 7 occurrences
+9. diff -u exer1.html exer4.html >exer4.diff
+
+Exercise 1.5
+1. emacs enter M-x make-directory enter
+2. M-x cd enter junk enter C-x C-f hello.c enter
+   //After copy the texts
+   C-x C-s
+3. M-x compile enter C-a C-k gcc SP -o SP hello SP hello.c enter
+4. C-x b hello.out enter C-u M-! ./hello enter
+5. C-@ C-e M-w C-x b key1.txt enter C-y
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n', b = '\\', q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn', b = '%c%c', q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+  printf (p, n, n, n, n, b, b, b, q, n, q, p, q, n, n, n, n);
+  return 0;
+}
+
+Exercise 1.6
+1. C-x b *scratch* enter
+2. (random SP "304567417") 
+   366610276817850818
+3. (setq SP x SP (random)) C-j
+   (setq SP y SP (random)) C-j
+4. (* SP x SP y) C-j
+   The answer is not correct due tothe problem of overflow
+5. M-: (* SP x SP y)
+   1369675613694347628 (#o114020413327361044554, #x130210b6bbc4496c) 
+   The results are given in both the decimal form and in octal and hex forms
+6. The random numbers are only pseudo-random rather than trully mathematically random. This is due to the reason that the randomness is followed by certain computer algorithms and rules that restrict it from being mathematically random. Also, due to the storage space constraints, the computer cannot generate numbers from an infinite source.
+7. After coverting the random number generated to binary numbers, I found out that the they have 62bits. Since it is signed, the max number will be 2^61-1, and the min number will be -2^61. Therefore, with this large range of numbers, as the size of number increases, the multiplication of the two numbers will be more likely to go overflow and lead to mathematically incorrect results. So the probability of getting mathematically incorrect results is approximately 1.

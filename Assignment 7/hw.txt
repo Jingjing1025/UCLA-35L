@@ -1,0 +1,44 @@
+hw.txt
+Name: Jingjing Nie
+UID: 304567417
+
+1. Yes, the resulting system will still be secure. Since the
+asymmetric cryptography is used, different keys are used for
+encrpytion and decryption. A plaintext from sender will firstly
+be encrypted using the public key, and then decrpted by using
+the private key. Therefore, even if the other teams had been 
+observing all the bytes going across the network, it would be
+meaningless if they do not have the private key, because they
+cannot decrypt the message.
+
+(1) If the other teams had also tapped my keyboards after I 
+completed all client-server setup and had thereby obtained my 
+team's keystrokes during later operation, my system will still
+stay secure. Thie reason lying behind is that since my team had
+completed all slient-server setup, we could ssh on the server
+without the need to type in any private infomation. Therefore, 
+even if the other team would observe my team's keystrokes during
+later operation, they still could not obtain our key information.
+So the system will still stay secure.
+
+
+(2) If the other teams temporarily had physical control of the USB,
+my system will no longer be secure either. Through the physical 
+control of USB, the team can get access to the .ssh folders, which 
+contain all key information. Thus, they will be able to use the 
+private key to decrypt the message.
+
+2. The gpg --verify command in instructions doesn't really verify 
+that I personally created the tar file because what it does is 
+firstly decrypt the received encrypted data using the public key.
+and then compare this decrypted data to the signature to see if 
+the data transferred has been altered. However, if someone else
+in the middle of the process modifies the data in a way that it  
+generates the same digest output, the verification process might 
+still work without ensuring the sender is still the same.
+
+To solve it, we can use an certificate authority that keeps track
+of the owner of the public key, so that we can ensure that the file
+has been sent by the original sender. We can get some information
+about the sender's key, and validate it with the sender. Then, we can
+sign the key, and set trust of the public key to full and ultimate.

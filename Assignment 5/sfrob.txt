@@ -1,0 +1,135 @@
+sfrob.txt
+Name: Jingjing Nie
+UID: 304567417
+
+I firstly created files of different number of lines.
+And then I tested their performances.
+
+======= Number of lines: 10 =======
+time ./sfrob < testFile
+real	0m0.016s
+user	0m0.003s
+sys	    0m0.004s
+
+time ./sfrobu < testFile
+real	0m0.015s
+user	0m0.003s
+sys		0m0.006s
+
+time ./sfrobu -f < testFile
+real	0m0.010s
+user	0m0.003s
+sys		0m0.005s
+
+time ./sfrobs < testFile
+real	0m0.016s
+user	0m0.010s
+sys		0m0.013s
+
+time ./sfrobs -f < testFile
+real	0m0.015s
+user	0m0.011s
+sys		0m0.011s
+
+======= Number of lines: 1000 =======
+time ./sfrob < testFile
+real	0m0.030s
+user	0m0.019s
+sys		0m0.007s
+
+time ./sfrobu < testFile
+real	0m0.082s
+user	0m0.029s
+sys		0m0.045s
+
+time ./sfrobu -f < testFile
+real	0m0.095s
+user	0m0.029s
+sys		0m0.048s
+
+time ./sfrobs < testFile
+real	0m0.026s
+user	0m0.020s
+sys		0m0.014s
+
+time ./sfrobs -f < testFile
+real	0m0.025s
+user	0m0.019s
+sys		0m0.012s
+
+======= Number of lines: 10000 =======
+time ./sfrob < testFile
+real	0m0.113s
+user	0m0.079s
+sys		0m0.017s
+
+time ./sfrobu < testFile
+real	0m1.630s
+user	0m0.336s
+sys		0m1.171s
+
+time ./sfrobu -f < testFile
+real	0m1.463s
+user	0m0.317s
+sys		0m1.117s
+
+time ./sfrobs < testFile
+real	0m0.121s
+user	0m0.106s
+sys		0m0.030s
+
+time ./sfrobs -f < testFile
+real	0m0.117s
+user	0m0.110s
+sys		0m0.026s
+
+======= Number of lines: 100000 =======
+time ./sfrob < testFile
+real	0m1.016s
+user	0m0.754s
+sys		0m0.133s
+
+time ./sfrobu < testFile
+real	2m29.238s
+user	0m4.811s
+sys		2m18.271s
+
+time ./sfrobu -f < testFile
+real	2m27.948s
+user	0m4.723s
+sys		2m17.908s
+
+time ./sfrobs < testFile
+real	0m1.070s
+user	0m0.952s
+sys		0m0.181s
+
+time ./sfrobs -f < testFile
+real	0m1.100s
+user	0m1.066s
+sys		0m0.180s
+
+The results have suggested that the code using unbuffered
+versin of reading and writing files always take the longest
+time. This time difference increases as the numbr of lines
+in the file increases. Thus, the running time of the unbuffered
+one increases greatly with increasing number of lines.
+Also, the running time of the buffered version is even
+faster than the shell script, which can be explained by the
+fact that the shell script runs bash and may take a little
+bit longer to run. 
+Then, the comparisons between commands with and without option 
+"-f" suggest that this option does not actually have a 
+siginificant effect on the running time.
+
+To find the number of comparisons, I used a counter in the
+frobcmp function to see how many times it has been called.
+
+#Lines: 		10	100	 1000	10000	100000
+#Comparisons: 	97	849	 8045	80046	800046
+
+After using excel to plot these points, I have found that
+they follow a linear relationship, with the formula:
+y = 8x + 35.214,  and R^2 = 1.
+
+

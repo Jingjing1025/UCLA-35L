@@ -1,0 +1,161 @@
+Lab 4
+Name: Jingjing Nie
+UID: 304567417
+
+1. Build coreutils
+"wget http://web.cs.ucla.edu/classes/spring18/cs35L/assign/coreutils-with-bug.tar.gz"
+I used this command to download the file, and I used
+"tar -xvf coreutils-with-bug.tar.gz"
+to extract the file
+
+I then went to the directory using "cd coreutils-with-bug/"
+and built the pacakage using
+"./configure --prefix=/u/ch/ugrad/jingjing/lab4"
+and "make"
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+            ^
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.14/ch/ugrad/jingjing/lab4/coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.14/ch/ugrad/jingjing/lab4/coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.14/ch/ugrad/jingjing/lab4/coreutils-with-bug'
+make: *** [all] Error 2
+
+According to the error message, the function futimens was already
+declared previously, so we need to use the patch:
+I first downloaded the diff file by:
+"wget http://web.cs.ucla.edu/classes/spring18/cs35L/assign/coreutils.diff"
+and then applied the patch file by:
+"patch -p0 < coreutils.diff"
+
+After I applied the patch file, I used:
+"make" to rebuid coreutils and it worked.
+
+It worked after patching since the patch file, by changing the name of
+the function from 'futimens' to 'coreutils_futimens', 
+solved the problem of conflicting 'futimers' functon declarations.
+
+2. Reproduce the problem
+Using the following commands:
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 /u/ch/ugrad/jingjing/lab4/coreutils-with-bug/src/ls -lt --full-time wwi-armistice now now1
+
+I got the results:
+-rw-r--r-- 1 jingjing chugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 jingjing chugrad 0 2018-05-01 06:05:23.445641441 +0000 now1
+-rw-r--r-- 1 jingjing chugrad 0 2018-05-01 06:04:53.829830676 +0000 now
+So a bug was present as the oldest file was listed first
+
+To figure out what went wrong, I used the gdb debugger
+I opened the file using gdb:
+"gdb /u/ch/ugrad/jingjing/lab4/coreutils-with-bug/src/ls"
+
+And I used "info functions" to check all the functions
+Through all the functions listed, I realized that the function:
+"static int compare_mtime(V, V);"
+might have led to the problem
+
+Then I set a break point at this function:
+"b compare_mtime
+Breakpoint 1 at 0x4067c0: file ../lib/timespec.h, line 48."
+
+and run the program (it stopped at the break point):
+"run -lt /tmp/tmp.XJqwfi2OQm"
+
+I then used "stepi" and "list" to check the details of the function:
+timespec_cmp (struct timespec a, struct timespec b)
+47	{
+48	  int diff = a.tv_sec - b.tv_sec;
+49	  return diff ? diff : a.tv_nsec - b.tv_nsec;
+50	}
+
+From this "timespec_cmp" function, I realized that
+the subtraction might lead to integer overflow
+problems.
+
+When I used "info locals", it gave the result
+"diff=30" because the time difference between "now" and "now1" is 30
+However, when I quit gdb and re-entered it to run it again,
+the result of "info locals" changed to:
+"diff = 1155986603"
+Thus, there was trully an overflow problem
+
+I then quit the gdb using "kill" and "quit",
+and then copied the relevant file to a new one
+under the directory "/u/ch/ugrad/jingjing/lab4"
+"cp /u/ch/ugrad/jingjing/lab4/coreutils-with-bug/lib/timespec.h timespec.h"
+and then edited it using emacs:
+"emacs timespec.h"
+
+In order to avoid overflow, I decided to use conditional operations
+instead of subtractions. I rewrote the function as:
+
+timespec_cmp (struct timespec a, struct timespec b)
+{
+  if(a.tv_sec < b.tv_sec)
+    {  return -1;}
+  else if(a.tv_sec > b.tv_sec)
+    {  return 1;}
+  else {  return 0;}
+}
+
+I then saved it using "C-x-s" and quit emacs using "C-x-c".
+
+3. Construct a new patch file
+Next, I created a new patch file using the diff file command:
+"diff -u coreutils-with-bug/lib/timespec.h timespec.h > coreutils-with-bug/lab4.diff"
+and I appllied the patch:
+"patch -p1 < lab4.diff"
+and remade the program: "make"
+
+Finally, to test whether the fixed version worked,
+I went back to the "$tmp" directory: "cd $tmp"
+and tested the "ls -lt" command again:
+"TZ=UTC0 /u/ch/ugrad/jingjing/lab4/coreutils-with-bug/src/ls -lt --full-time wwi-armistice now now1"
+
+Since the output was:
+-rw-r--r-- 1 jingjing chugrad 0 2018-05-01 06:05:23.445641441 +0000 now1
+-rw-r--r-- 1 jingjing chugrad 0 2018-05-01 06:04:53.829830676 +0000 now
+-rw-r--r-- 1 jingjing chugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice"
+The bug has been fixed.
+
+4. Test in home directory
+I went back to home directory: "cd ~/lab4"
+and tested the already installed ls command using the commands:
+"touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 ls -lt --full-time wwi-armistice now now1"
+
+The output was:
+-rw-r--r-- 1 jingjing chugrad 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 jingjing chugrad 0 2018-05-01 07:01:46.900644000 +0000 now1
+-rw-r--r-- 1 jingjing chugrad 0 2018-05-01 07:01:40.624074000 +0000 now
+
+The "wwi-armistice" file was listed in the first place,
+and the time displayed suggested a future time. This is
+because after the Unix Epoch, Thursday, 1 January 1970,
+timestamps are represented as seconds and stored. Then,
+while the SEASnet NFS filesystem has unsigned 32-bit 
+time stamps, the Local File System on Linux server has 
+signed 32-bit time stamps. Therefore, when a file is
+"touched" on the NFS filesystem, the most significant
+bit is regarded as a positive number instead of a negative
+one, and thus make the time interpreted wrongly as a
+larger number or a future time. Thus, files have to be 
+touched on local filesystem.

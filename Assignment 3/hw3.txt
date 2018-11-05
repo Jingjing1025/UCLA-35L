@@ -1,0 +1,47 @@
+Name: Jingjing Nie 
+UID: 304567417
+
+Q1.According to the patch file, 
+-          if (ignore_mode == IGNORE_DEFAULT)
+-            ignore_mode = IGNORE_DOT_AND_DOTDOT;
++          ignore_mode = IGNORE_DOT_AND_DOTDOT;
+
+The patch deleted an if statement. Thus, "ls" now
+has better performance since there's one less step.
+
+Q2.According to the patch file,
+Some other files such as the local.mk file and the
+a-option.sh file have also been modified. Therefore,
+we need to watch out for the modified parts in these
+Two files as well. Also, we need to be careful when 
+applying patch files because when changes have been 
+made to the original file, patches can no longer be
+applied to the file due to mis-match.
+
+Q3.python randline.py /dev/null
+Traceback (most recent call last):
+  File "randline.py", line 70, in <module>
+    main()
+  File "randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/usr/lib64/python2.7/random.py", line 274, in choice
+    return seq[int(self.random() * len(seq))]  
+    # raises IndexError if seq is empty
+IndexError: list index out of range
+
+This problem occurs because seq is empty since the number of 
+lines of an empty file is zero, which raises the IndexError 
+list out of range.
+
+Q4.python3 randline.py test2.txt 
+  File "randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+
+Using python3, a SyntaxError occurs. This is due to the
+fact that python3 merges IOError into OSError, so the
+syntax should be changed accordingly in pyton3.
+

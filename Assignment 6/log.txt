@@ -1,0 +1,61 @@
+log.txt
+Name: Jingjing Nie
+UID: 304567417
+
+1. Check Version
+I used "cd /usr/local/cs/bin/" to go to the appropriate
+direction, and then used "./sort --version" to check version.
+It showed 8.29, so it's the latest version.
+
+2. Create File
+Since single-precision floating point numbers occupy 4 bytes,
+a total of 40000000 bytes is needed.
+I first checked command "od" through "man od", and then used:
+"cat /dev/urandom | od -f -An -N 40000000 | tr -s ' ' '\n' > rand.txt"
+
+3. Compare Performance
+To test the performance of sort with different number of threads,
+I firstly used "info sort", and I found these:
+'--parallel=N'
+     Set the number of sorts run in parallel to N.  By default, N is set
+     to the number of available processors, but limited to 8, as there
+     are diminishing performance gains after that.  Note also that using
+     N threads increases the memory usage by a factor of log N.  Also
+     see *note nproc invocation::.
+so I could use this command to set the parallelim for sort.
+To test the execution time, I used "time -p sort -g".
+
+Without "--parallel"
+time -p sort -g < rand.txt > /dev/null
+real 21.88
+user 116.44
+sys 0.44
+
+With "parallel", thread = 1
+time -p sort -g --parallel=1 < rand.txt > /dev/null
+real 108.53
+user 108.25
+sys 0.27
+
+With "parallel", thread = 2
+time -p sort -g --parallel=2 < rand.txt > /dev/null
+real 58.76
+user 111.55
+sys 0.25
+
+With "parallel", thread = 4
+time -p sort -g --parallel=4 < rand.txt > /dev/null
+real 34.03
+user 114.99
+sys 0.35
+
+With "parallel", thread = 8
+time -p sort -g --parallel=8 < rand.txt > /dev/null
+real 22.27
+user 116.56
+sys 0.46
+
+The copmarisons have suggested that when the number of threads
+used increases, the real execution time decreases greatly. Also,
+since the real time is pretty short eve without "--parallel"
+option, the original sort command uses parallelism already.

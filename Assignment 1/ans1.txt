@@ -1,0 +1,102 @@
+Name: 
+UID: 
+
+
+1. man -k <name>
+    I used 'man man', and it shows the following:
+    -k     Equivalent to apropos.
+    -K     Search  for  the specified string in *all* man pages.
+
+2. I used 'man which'
+   which cp
+   /usr/local/cs/bin/cp
+  
+   which sh
+   /usr/bin/sh
+
+3. I used 'man find' and searched all executable programs with only one-character-long name under the directory '/usr/bin'
+   find /usr/bin -executable -name '?'
+
+The output is:
+/usr/bin/[
+/usr/bin/w
+/usr/bin/X
+
+I used 'help ['
+Evaluate conditional expression.
+
+
+I used 'man w'
+Show who is logged on and what they are doing.
+
+I used 'man X' but it shows there is no entry. So I then used 'X', and it suggested that X is used to start X server.
+
+4. I used 'cd /usr/bin', and then 'man ls'
+It shows that 'when showing file information for a symbolic link, show information for the file the link references rather than for the link itself'
+The actual location is:
+/usr/bin/emacs-24.3
+
+5. I used '/usr/bin/emacs -version'
+GNU Emacs 24.3.1
+Copyright (C) 2013 Free Software Foundation, Inc.
+
+I used 'emacs -version'
+GNU Emacs 25.3.1
+Copyright (C) 2017 Free Software Foundation, Inc.
+
+The two versions are different, which is due to the fact that while the program in the /usr/bin/emacs path has not been updated to the latest version, the program in the system path has been updated.
+
+6. I used 'man chmod' and find out that 's' stands for 'set user or group  ID on  execution (s)' and 'g' stands for 'other users who are members of the file's group (g)'
+So 'g+s' means to add the permission of set group id on execution
+
+'o' means 'other users not in the file's group (o)' and 'x' means 'execute'
+So 'o-x' removes the permission to execute for users not in the file's group
+
+7. I first searched for how to use find through 'man find' and then used 'find /usr/local/cs -type d -ctime -30'
+Part of the results obtained are as followed:
+/usr/local/cs
+/usr/local/cs/src/automake
+/usr/local/cs/src/automake/RCS
+/usr/local/cs/src/emacs
+/usr/local/cs/src/emacs/RCS
+/usr/local/cs/src/help2man
+/usr/local/cs/src/help2man/RCS
+/usr/local/cs/src/python
+/usr/local/cs/src/python/RCS
+/usr/local/cs/share/info
+/usr/local/cs/share/man/man1
+/usr/local/cs/bin
+
+8. I used 'which find' first to get the directory of find: /usr/bin/find, and then 'cd /usr/bin' to go to that directory. Then, I used 'man find', and figured out that the symbol links are of type l and the number of symbol links can be found by 'wc -l'.
+So I used 'find . -type l | wc -l', and obtained 246.
+
+9. I used 'man ls' first and then 'ls -lt' to sort the files by last-modified time (newest first). I obtained the oldest file as:
+-rwxr-xr-x.  1 root root       19408 Dec 28  2013 librom1394.so.0.3.0
+The file name is librom1394.so.0.3.0
+
+10. I used 'man locale' and figured out that it 'displays the settings of the environment variables' so the data is 'based on the settings of the environment variables that control the locale'
+
+11. I used 'C-h a downcase'
+downcase-dwim                 M-x ... RET
+   Downcase words in the region, if active; if not, downcase word at point.
+downcase-region               C-x C-l
+   Convert the region to lower case.  In programs, wants two arguments.
+downcase-word                 M-l
+   Convert to lower case from point to end of word, moving over.
+
+12.I used 'C-h ? b' to look for the details for all commands and then searched the commands using 'C-s C-M-r'
+Their actions are as followed:                                                                                             
+C-M-r           isearch-backward-regexp: do incremental search backward for regular expression                                          
+C-M-s           isearch-forward-regexp: do incremental search forward for regular expression                                            
+C-M-t           transpose-sexps: With non-zero prefix arg ARG, effect is to take the sexp before point and drag it forward past ARG other sexps (backward if ARG is negative). If ARG is zero, the sexps ending at or after point and at or after mark are interchanged.                                                  
+C-M-u           backward-up-list: move backward out of one level of parentheses                                                 
+C-M-v           scroll-other-window: scroll next window upward ARG lines; or near full screen if no ARG       
+
+13. I used 'C-h k C-g' to find the answer
+C-g signals a 'quit' condition, and causes a quit. 'During execution of Lisp code, this character causes a quit directly. And at top-level, as an editor command, this simply beeps.'
+
+14. I used 'C-h f yank' to look for more details of yank, and found that yank is 'an interactive compiled Lisp function, and reinsert ("paste") the last stretch of killed text'.
+
+15. I used 'C-h b C-s dired' to look for more details of dired. It shows that dired 'can delete, rename, print, etc. some files in it', and also has the functions of 'ls'. I also used 'man ls' for the details of ls. So dired has more functions than ls -l.
+I then changed direction by using 'cd /usr/bin' and used both 'ls -l' and in emacs 'C-x d /usr/bin' to see the differences between them.
+I found that while there are 301688 total output lines when 'ls -l' is used, there are 301764 lines when emacs dired is used.

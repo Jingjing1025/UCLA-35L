@@ -1,0 +1,90 @@
+log.txt
+Name: Jingjing Nie
+UID: 304567417
+Partner: Kushal Nimkar
+
+For this lab, I first reset and flashed my BeagleBone for better performance.
+I followed the instructions, and installed drivers.
+
+I then reset my BeagleBone using a microSD card:
+I downloaded the latest image of BBGW, udecompressed it, and then used the 
+microSD adapter and the software Etcher to write the image to my SD card.
+the file /boot/uEnv.txt has also been modified by deleting the "#" in front of
+the line "cmdline=init=/opt/scripts/tools/eMMC/init-eMMC-flasher-v3.sh".
+I then powered down my BeagleBone, and inserted my SD card into the BeagleBone.
+Then, I waited for about 10 minutes for flashing to finish.
+Lastly, I powered down the BeagleBone, removed the SD card, and re-powered it.
+
+Next, I SSHed to BeagleBone using "sudo ssh root@192.168.7.2",
+and used "sudo connmanctl" to connect my Beaglebone to wifi.
+Connect to Wifi:
+connmanctl> enable wifi
+connmanctl> scan wifi
+connmanctl> services
+connmanctl> agent on
+connmanctl> connect wifi_506583d4fc5e_544e434150413937414239_managed_psk
+Passphrase? 3760ClassNet
+connmanctl> quit
+
+Then, I updated the database of apt-get:
+"sudo apt-get update"
+and installed xauth and xvfb for X11 forwarding support for future SSH 
+connections to my BeagleBone using:
+"sudo apt-get install xauth"
+"sudo apt-get install xvfb"
+
+I then installed XQuartz, made sure X11 was enabled on BeagleBone, and
+installed Firefox.
+
+Next, my partner and I worked together to log into each other's host.
+First, I installed OpenSSH using the commands:
+"sudo apt-get update"
+"sudo apt-get install openssh-server"
+"sudo apt-get install openssh-client"
+
+I then set up the Server account by using the following commands
+• sudo useradd -d /home/Nimkar -m nimkar
+• sudo passwd nimkar
+
+Then, I created a .ssh folder in nimkar's home directory, assigned him
+the ownership, and changed the mode to 700.
+• cd /home/Nimkar
+• sudo mkdir .ssh
+• sudo chown -R nimkar .ssh
+• sudo chmod 700 .ssh
+
+I then used "ifconfig", and found that my ip address was 10.97.85.72 
+So he can log in using this ip address.    
+• ps aux | grep ssh                           
+root      1151  0.0  0.7   9224  3788 ?        Ss   17:54   0:00 sshd: root@pts/0    
+root      1569  0.0  0.7   6540  3584 ?        Ss   17:56   0:00 /usr/sbin/sshd -D
+root      1701  0.0  0.2   3648  1260 pts/0    S+   18:13   0:00 grep ssh
+
+And then I set the Client account through all the three methods:
+Password login:
+• ping 10.97.85.71
+After I made sure that the server indeed responded, I then stopped it.
+• ssh jingjing@10.97.85.71
+Password-less login:
+• ssh-keygen
+I obtained the key's randomart image as:
+	+---[RSA 2048]----+
+	|     .o..        |
+	|       o         |
+	|      o          |
+	|    .o o         |
+	|     *= S.       |
+	|  . +.o.. .      |
+	|ooo..  o o       |
+	|+o.o    =        |
+	| .o.   E         |
+	+-----------------+
+• ssh-copy-id -i jingjing@10.97.85.71
+• ssh jingjing@10.97.85.71
+Passphrase-less login:
+• ssh-add
+• ssh -X jingjing@10.97.85.71
+
+Finally, I run programs using GUI, and it worked successfully after I used -Y option.
+• xterm
+• firefox

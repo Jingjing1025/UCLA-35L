@@ -1,0 +1,21 @@
+gitk-description
+Name: Jingjing Nie
+UID: 304567417
+
+According to the screen shown on XQuartz, there are six subwindows
+in total, with three in the first row, one in the second row, and 
+two in the bottom row. 
+
+The upper leftmost window displays a whole record of commits made
+in the history. The upper middle window displays the information 
+of the author and their email id of the commits, and the upper 
+right window lists out the times. 
+
+Then, in the middle row subwindow, there is information about the
+SHA1 ID. There is also a field for searching keywords in the diff
+file below.
+
+Next, the left window of the bottom row displays the diff file of
+the selected commit, with the related information of Parent, Child,
+Branches, Follows, and Precedes. Lastly, the right window in the 
+bottom row displays the files that the commits have impacts on.

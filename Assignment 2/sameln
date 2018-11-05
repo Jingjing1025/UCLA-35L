@@ -1,0 +1,65 @@
+#! /bin/bash
+
+#takes in arguments for directory
+dir=$1
+
+#obtain all regular files and hidden files                                                                                   
+regFile=`ls $dir | sort`
+hidFile=`ls -a $dir | sed -n '/^\./p' | sort`
+
+#change the internal separator to newlines; change it back after finished                                                    
+original="$IFS"
+IFS=$'\n'
+
+#create a file holder, and initialize a number counter                                                                       
+declare -a holder
+count=0
+
+for hidden in $hidFile
+do
+  if [ ! -r "$dir/$hidden" ]
+  then
+      echo "The file $hidden is not readable."
+  elif [ ! -f "$dir/$hidden" ] || [ -L "$dir/$hidden" ]
+  then
+      echo "The file $hidden is not a regular file."
+  else
+      echo "Regular file $hidden found."
+      holder[$count]="$dir/$hidden"
+      count=$(($count+1))
+  fi
+done
+
+for reg in $regFile
+do
+  if [ ! -r "$dir/$reg" ]
+  then
+      echo "The file $reg is not readable."
+  elif [ ! -f "$dir/$reg" ] || [ -L "$dir/$reg" ]
+  then
+      echo "The file $reg is not a regular file."
+  else
+      echo "Regular file $reg found."
+      holder[$count]="$dir/$reg"
+      count=$(($count+1))
+  fi
+done
+
+for (( i=0; i<$count; i++ ))
+do
+  for (( j=i+1; j<$count; j++ ))
+  do
+     #compare the two files using the 'cmp' command; return 0 if same
+     cmp -s "${holder[$i]}" "${holder[$j]}"
+     if [ $? -eq 0 ]
+     then 
+   	#link the duplicated file with a hard link
+        ln -f -- "${holder[$i]}" "${holder[$j]}"
+        echo "Linking ${holder[$j]} to ${holder[$i]}"
+        holder[$j]=holder[$i]
+     fi
+  done
+done
+
+#change IFS back its origianl setting
+IFS=$original

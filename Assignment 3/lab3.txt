@@ -1,0 +1,96 @@
+Name: Jingjing Nie
+UID: 304567417
+
+1. "wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz"
+I used this command to download the file, and then
+"tar -xf coreutils-8.29.tar.xz"
+to  extract the file
+
+I then went into that directory, downloaded signature and keyring
+"wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig"
+"wget https://ftp.gnu.org/gnu/gnu-keyring.gpg"
+and used the command: 
+"gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig"
+to verify the signature and got:
+gpg: Signature made Wed Dec 27 10:29:05 2017 PST using RSA key ID 306037D9
+gpg: Good signature from "P?draig Brady <P@draigBrady.com>"
+gpg:                 aka "P?draig Brady <pbrady@redhat.com>"
+gpg:                 aka "P?draig Brady <pixelbeat@gnu.org>"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 6C37 DC12 121A 5006 BC1D  B804 DF6F D971 3060 37D9
+The problems suggest that we cannot ensure that the
+signature belongs to the owner so the signature is not trusted.
+
+2. I first used "ls" to check for the files in that directory
+and then I used "less INSTALL" to look through
+the instructions of how to install the application.
+
+Based on the instructions, I used
+"./configure --prefix=/u/ch/ugrad/jingjing/lab3" 
+to configure the package for my system and change the install
+location to /u/ch/ugrad/jingjing/lab3 by "prefix".
+
+"make" 
+to compile the package
+
+"make install"
+to install the programs and any data files and documentation.
+
+3.I then went to the directory /u/ch/ugrad/jingjing/lab3
+and created the command "la" using "emacs la"
+
+#!/bin/sh
+exec /u/ch/ugrad/jingjing/lab3/coreutils-8.29/src/ls -a "$@"
+
+And I then typed "./la -A" with the results:
+.    coreutils-8.29    	   gnu-keyring.gpg  lab3.txt~  share
+..   coreutils-8.29.tar.xz la		    	        la~
+bin  coreutils-8.29.tar.xz.sig				lab3.txt	 libexec
+
+Here, the bug occurs since the dot files still appear 
+when they are not supposed to becuase of "-A"
+
+4.I first went to the directory
+"cd /u/ch/ugrad/jingjing/lab3/coreutils-8.29/"
+And then I created a patch_file and copied the patch into it
+Then I used "patch -p1 < patch_file" to apply the patch
+(NEWS file failed the patching, but the bugs could still be fixed)
+
+5. I typed the command "make" to build the corrected file
+The commands generated are as followed:
+  CC       src/ls.o
+  CCLD     src/dir
+  CCLD     src/ls
+  CCLD     src/vdir
+  GEN      man/dir.1
+  GEN      man/ls.1
+  GEN      man/vdir.1
+They are used for compilation, linking, and documentation purposes
+The other cmmands are noe executed because there's nothing that 
+needs to be done
+
+6. I first tested the unmodified version of ls 
+by changing the la command shell file
+
+#!/bin/sh
+exec /u/ch/ugrad/jingjing/lab3/bin/ls -a "$@"
+
+And I then typed "./la -A" with the results:
+.    coreutils-8.29        gnu-keyring.gpg  lab3.txt~  share
+..   coreutils-8.29.tar.xz la                           la~
+bin  coreutils-8.29.tar.xz.sig                          lab3.txt         libexec
+
+There are still bugs because dot files still exist.
+
+And then I tested the fixed version by changing the la file:
+
+#!/bin/sh
+exec /u/ch/ugrad/jingjing/lab3/coreutils-8.29/src/ls -a "$@"
+
+And I then typed "./la -A" with the results:
+bin          coreutils-8.29.tar.xz.sig  lab3.txt   libexec
+coreutils-8.29		    gnu-keyring.gpg		  lab3.txt~  share
+coreutils-8.29.tar.xz  la            la~
+
+Since the dot files now disappear, the bugs are fixed.
